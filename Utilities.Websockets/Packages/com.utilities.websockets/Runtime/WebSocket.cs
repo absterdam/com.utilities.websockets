@@ -183,7 +183,11 @@ namespace Utilities.WebSockets
                         }
                         else
                         {
-                            await CloseAsync(cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                            var closeStatus = _socket.CloseStatus;
+                            var closeCode = closeStatus.HasValue
+                                ? (CloseStatusCode)(ushort)closeStatus.Value
+                                : CloseStatusCode.Normal;
+                            await CloseAsync(closeCode, _socket.CloseStatusDescription ?? string.Empty, CancellationToken.None).ConfigureAwait(false);
                             break;
                         }
                     }
